@@ -101,8 +101,10 @@ public class Game {
             
             if (decision.isBid()) {
                 round.handleBid(currentPlayer, decision.getAmount());
+                System.out.println(currentPlayer.getName() + " BIDS $" + String.format("%.0f", decision.getAmount()));
             } else {
                 round.handlePass(currentPlayer);
+                System.out.println(currentPlayer.getName() + " PASSES");
             }
         }
         
