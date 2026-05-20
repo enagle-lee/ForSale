@@ -50,8 +50,15 @@ public class Round {
         passedCount++;
         
         if (!tableProperties.isEmpty()) {
-            Property takenProperty = tableProperties.remove(0);
-            player.addProperty(takenProperty);
+            // Find and remove the lowest numbered property on the table
+            Property lowestProperty = tableProperties.get(0);
+            for (Property p : tableProperties) {
+                if (p.getId() < lowestProperty.getId()) {
+                    lowestProperty = p;
+                }
+            }
+            tableProperties.remove(lowestProperty);
+            player.addProperty(lowestProperty);
             
             double payment = 0;
             double currentBid = player.getCurrentRoundBid();
@@ -67,7 +74,7 @@ public class Round {
             }
             
             player.pay(payment);
-            activityLog.log(player.getName() + " passes, takes " + takenProperty + 
+            activityLog.log(player.getName() + " passes, takes " + lowestProperty + 
                            ", pays $" + String.format("%.0f", payment));
         } else {
             activityLog.log(player.getName() + " passes (no properties left on table)");
@@ -84,8 +91,14 @@ public class Round {
             currentHighestBidder.pay(winAmount);
             
             if (!tableProperties.isEmpty()) {
-                Property winProperty = tableProperties.get(tableProperties.size() - 1);
-                tableProperties.remove(tableProperties.size() - 1);
+                // Winner gets the highest numbered property
+                Property winProperty = tableProperties.get(0);
+                for (Property p : tableProperties) {
+                    if (p.getId() > winProperty.getId()) {
+                        winProperty = p;
+                    }
+                }
+                tableProperties.remove(winProperty);
                 currentHighestBidder.addProperty(winProperty);
                 activityLog.log(currentHighestBidder.getName() + " wins with bid of $" + 
                                String.format("%.0f", winAmount) + ", gets " + winProperty);
