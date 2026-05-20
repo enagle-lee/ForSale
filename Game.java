@@ -10,6 +10,7 @@ public class Game {
     private int currentRoundNumber;
     private final List<Integer> availableProperties;
     private Scanner scanner;
+    private Player roundStartPlayer;
 
     public Game() {
         this.players = new ArrayList<>();
@@ -17,6 +18,7 @@ public class Game {
         this.strategies = new BidStrategy[4];
         this.currentRoundNumber = 0;
         this.availableProperties = new ArrayList<>();
+        this.roundStartPlayer = null;
         
         initializeAvailableProperties();
         initializePlayers();
@@ -48,6 +50,8 @@ public class Game {
         players.add(cleo);
         strategies[3] = new BotBidStrategy("Cleo", 0.4);
         
+        roundStartPlayer = user; // User starts round 1
+        
         activityLog.log("Game started! All players begin with $18,000");
         activityLog.log("Players: " + String.join(", ", players.stream()
                                                            .map(Player::getName)
@@ -77,9 +81,9 @@ public class Game {
             player.resetRoundState();
         }
         
-        // Keep cycling through active players in order, starting with first player
+        // Keep cycling through active players in order, starting with roundStartPlayer
         List<Player> activePlayers;
-        int playerIndex = 0;
+        int playerIndex = players.indexOf(roundStartPlayer);
         
         while (round.getActivePlayers().size() > 1) {
             activePlayers = round.getActivePlayers();
@@ -118,6 +122,12 @@ public class Game {
         }
         
         round.completeRound();
+        
+        // Set the next round's starting player to this round's winner
+        if (round.getRoundWinner() != null) {
+            roundStartPlayer = round.getRoundWinner();
+        }
+        
         displayGameState();
     }
 

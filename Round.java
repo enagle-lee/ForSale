@@ -9,6 +9,7 @@ public class Round {
     private Player currentHighestBidder;
     private final ActivityLog activityLog;
     private int passedCount;
+    private Player roundWinner;
 
     public Round(List<Property> properties, List<Player> players, ActivityLog activityLog) {
         this.tableProperties = new ArrayList<>(properties);
@@ -18,6 +19,7 @@ public class Round {
         this.currentHighestBidder = null;
         this.activityLog = activityLog;
         this.passedCount = 0;
+        this.roundWinner = null;
     }
 
     public List<Property> getTableProperties() {
@@ -34,6 +36,10 @@ public class Round {
 
     public Player getCurrentHighestBidder() {
         return currentHighestBidder;
+    }
+
+    public Player getRoundWinner() {
+        return roundWinner;
     }
 
     public void handleBid(Player player, double amount) {
@@ -102,6 +108,7 @@ public class Round {
                 currentHighestBidder.addProperty(winProperty);
                 activityLog.log(currentHighestBidder.getName() + " wins with bid of $" + 
                                String.format("%.0f", winAmount) + ", gets " + winProperty);
+                roundWinner = currentHighestBidder;
             }
         }
     }
