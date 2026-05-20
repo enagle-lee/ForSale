@@ -4,13 +4,15 @@ import java.util.List;
 public class Player {
     private final String name;
     private double balance;
+    private double checksEarned;
     private final List<Property> properties;
-    private double currentBidThisRound;  // Only the most recent bid in this round
+    private double currentBidThisRound;
     private boolean hasPassedThisRound;
 
     public Player(String name, double initialBalance) {
         this.name = name;
         this.balance = initialBalance;
+        this.checksEarned = 0;
         this.properties = new ArrayList<>();
         this.currentBidThisRound = 0;
         this.hasPassedThisRound = false;
@@ -24,24 +26,32 @@ public class Player {
         return balance;
     }
 
-    public List<Property> getProperties() {
-        return new ArrayList<>(properties);
+    public double getChecksEarned() {
+        return checksEarned;
     }
 
-    public int getPropertyValue() {
-        int total = 0;
-        for (Property p : properties) {
-            total += p.getValue();
-        }
-        return total;
+    public double getTotalMoney() {
+        return balance + checksEarned;
+    }
+
+    public List<Property> getProperties() {
+        return new ArrayList<>(properties);
     }
 
     public void addProperty(Property property) {
         properties.add(property);
     }
 
+    public void removeProperty(Property property) {
+        properties.remove(property);
+    }
+
     public void pay(double amount) {
         this.balance -= amount;
+    }
+
+    public void addChecks(double amount) {
+        this.checksEarned += amount;
     }
 
     public void resetRoundState() {

@@ -50,15 +50,52 @@ public class Game {
         players.add(cleo);
         strategies[3] = new BotBidStrategy("Cleo", 0.4);
         
-        roundStartPlayer = user; // User starts round 1
+        roundStartPlayer = user;
         
         activityLog.log("Game started! All players begin with $18,000");
-        activityLog.log("Players: " + String.join(", ", players.stream()
-                                                           .map(Player::getName)
-                                                           .toArray(String[]::new)));
+        activityLog.log("Players: " + String.join(", ", players.stream().map(Player::getName).toArray(String[]::new)));
     }
 
-    public void playRound() {
+    public void playPhase1() {
+        System.out.println("\n\n===== PHASE I: BIDDING =====\n");
+        activityLog.log("\n===== PHASE I: BIDDING =====");
+        
+        for (int i = 0; i < 5 && !availableProperties.isEmpty(); i++) {
+            playRound();
+            if (i < 4) {
+                System.out.println("\nPress Enter to continue to next round...");
+                scanner.nextLine();
+            }
+        }
+    }
+
+    public void playPhase2() {
+        System.out.println("\n\n===== PHASE II: SELLING =====\n");
+        System.out.println("Phase I Complete! All players carry over their properties and balance.");
+        System.out.println("Press Enter to begin Phase II (Selling)...");
+        scanner.nextLine();
+        
+        activityLog.log("\n===== PHASE II: SELLING =====");
+        
+        for (int round = 1; round <= 5; round++) {
+            CheckSet checks;
+            if (round == 1) {
+                checks = CheckSet.createRound1();
+            } else {
+                checks = CheckSet.createRandomRound();
+            }
+            
+            Phase2Round phase2Round = new Phase2Round(round, players, checks, activityLog);
+            phase2Round.play(scanner);
+            
+            if (round < 5) {
+                System.out.println("\nPress Enter to continue to next round...");
+                scanner.nextLine();
+            }
+        }
+    }
+
+    private void playRound() {
         currentRoundNumber++;
         System.out.println("\n========== ROUND " + currentRoundNumber + " ==========");
         activityLog.log("========== ROUND " + currentRoundNumber + " ==========");
@@ -81,7 +118,6 @@ public class Game {
             player.resetRoundState();
         }
         
-        // Keep cycling through active players in order, starting with roundStartPlayer
         List<Player> activePlayers;
         int playerIndex = players.indexOf(roundStartPlayer);
         
@@ -89,7 +125,6 @@ public class Game {
             activePlayers = round.getActivePlayers();
             if (activePlayers.isEmpty()) break;
             
-            // Find next active player starting from playerIndex
             boolean foundPlayer = false;
             for (int i = 0; i < players.size(); i++) {
                 int currentPlayerIdx = (playerIndex + i) % players.size();
@@ -102,10 +137,8 @@ public class Game {
                     int strategyIndex = currentPlayerIdx;
                     BidStrategy strategy = strategies[strategyIndex];
                     
-                    BidDecision decision = strategy.makeBidDecision(candidate, 
-                                                                     round.getTableProperties(),
-                                                                     round.getCurrentHighestBid(),
-                                                                     players);
+                    BidDecision decision = strategy.makeBidDecision(candidate, round.getTableProperties(),
+                                                                     round.getCurrentHighestBid(), players);
                     
                     if (decision.isBid()) {
                         round.handleBid(candidate, decision.getAmount());
@@ -123,7 +156,6 @@ public class Game {
         
         round.completeRound();
         
-        // Set the next round's starting player to this round's winner
         if (round.getRoundWinner() != null) {
             roundStartPlayer = round.getRoundWinner();
         }
@@ -134,21 +166,15 @@ public class Game {
     public void play() {
         System.out.println("===== BUY AND SELL GAME =====\n");
         
-        for (int i = 0; i < 5 && !availableProperties.isEmpty(); i++) {
-            playRound();
-            if (i < 4) {
-                System.out.println("\nPress Enter to continue to next round...");
-                scanner.nextLine();
-            }
-        }
+        playPhase1();
+        playPhase2();
         
-        displayGameSummary();
+        displayFinalStandings();
     }
 
     private void displayGameState() {
         System.out.println("\n--- GAME STATE ---");
         
-        // Display user's information
         Player user = players.get(0);
         System.out.println(user);
         if (!user.getProperties().isEmpty()) {
@@ -158,7 +184,6 @@ public class Game {
             }
         }
         
-        // Display other players' info
         for (int i = 1; i < players.size(); i++) {
             Player p = players.get(i);
             System.out.println(p);
@@ -167,17 +192,20 @@ public class Game {
         System.out.println("------------------");
     }
 
-    private void displayGameSummary() {
-        System.out.println("\n===== GAME OVER =====");
-        System.out.println("\nFinal Standings:");
+    private void displayFinalStandings() {
+        System.out.println("\n\n===== GAME OVER =====");
+        System.out.println("\nFinal Standings (Phase I Balance + Phase II Checks):\n");
         
         List<Player> sortedPlayers = new ArrayList<>(players);
-        sortedPlayers.sort((a, b) -> Integer.compare(b.getProperties().size(), a.getProperties().size()));
+        sortedPlayers.sort((a, b) -> Double.compare(b.getTotalMoney(), a.getTotalMoney()));
         
         for (int i = 0; i < sortedPlayers.size(); i++) {
             Player p = sortedPlayers.get(i);
-            System.out.println((i + 1) + ". " + p.getName() + " - Properties: " + p.getProperties().size() + 
-                             ", Balance: $" + String.format("%.0f", p.getBalance()));
+            String rank = (i == 0) ? "WINNER" : "" + (i + 1) + ".";
+            System.out.println(rank + " " + p.getName() + 
+                             " - Balance: $" + String.format("%.0f", p.getBalance()) +
+                             " + Checks: $" + String.format("%.0f", p.getChecksEarned()) +
+                             " = Total: $" + String.format("%.0f", p.getTotalMoney()));
         }
         
         System.out.println("\n");
