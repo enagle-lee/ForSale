@@ -37,12 +37,11 @@ public class Round {
     }
 
     public void handleBid(Player player, double amount) {
-        player.bid(amount);
-        currentHighestBid = player.getCurrentRoundBid();
+        player.setBid(amount);  // Replace current bid with new bid
+        currentHighestBid = amount;
         currentHighestBidder = player;
         passedCount = 0; // Reset pass counter when someone bids
-        activityLog.log(player.getName() + " bids $" + String.format("%.0f", amount) + 
-                       " (total this round: $" + String.format("%.0f", player.getCurrentRoundBid()) + ")");
+        activityLog.log(player.getName() + " bids $" + String.format("%.0f", amount));
     }
 
     public void handlePass(Player player) {
@@ -55,8 +54,16 @@ public class Round {
             player.addProperty(takenProperty);
             
             double payment = 0;
-            if (player.getCurrentRoundBid() > 0) {
-                payment = player.getCurrentRoundBid() / 2.0;
+            double currentBid = player.getCurrentRoundBid();
+            
+            if (currentBid > 0) {
+                if (currentBid == 1000) {
+                    // Special case: if only bid 1000, forfeit all of it
+                    payment = 1000;
+                } else {
+                    // Otherwise pay half of current bid
+                    payment = currentBid / 2.0;
+                }
             }
             
             player.pay(payment);

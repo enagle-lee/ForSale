@@ -97,9 +97,6 @@ public class Game {
                     int strategyIndex = currentPlayerIdx;
                     BidStrategy strategy = strategies[strategyIndex];
                     
-                    System.out.println("\n--- " + candidate.getName() + "'s Turn ---");
-                    System.out.println("Active players remaining: " + activePlayers.size());
-                    
                     BidDecision decision = strategy.makeBidDecision(candidate, 
                                                                      round.getTableProperties(),
                                                                      round.getCurrentHighestBid(),
@@ -107,8 +104,7 @@ public class Game {
                     
                     if (decision.isBid()) {
                         round.handleBid(candidate, decision.getAmount());
-                        System.out.println(candidate.getName() + " BIDS $" + String.format("%.0f", decision.getAmount()) +
-                                         " (total this round: $" + String.format("%.0f", candidate.getCurrentRoundBid()) + ")");
+                        System.out.println(candidate.getName() + " BIDS $" + String.format("%.0f", decision.getAmount()));
                     } else {
                         round.handlePass(candidate);
                         System.out.println(candidate.getName() + " PASSES");

@@ -5,14 +5,14 @@ public class Player {
     private final String name;
     private double balance;
     private final List<Property> properties;
-    private double currentRoundBid;
+    private double currentBidThisRound;  // Only the most recent bid in this round
     private boolean hasPassedThisRound;
 
     public Player(String name, double initialBalance) {
         this.name = name;
         this.balance = initialBalance;
         this.properties = new ArrayList<>();
-        this.currentRoundBid = 0;
+        this.currentBidThisRound = 0;
         this.hasPassedThisRound = false;
     }
 
@@ -45,16 +45,16 @@ public class Player {
     }
 
     public void resetRoundState() {
-        currentRoundBid = 0;
+        currentBidThisRound = 0;
         hasPassedThisRound = false;
     }
 
-    public void bid(double amount) {
-        currentRoundBid += amount;
+    public void setBid(double amount) {
+        this.currentBidThisRound = amount;
     }
 
     public double getCurrentRoundBid() {
-        return currentRoundBid;
+        return currentBidThisRound;
     }
 
     public void markAsPassedThisRound() {
