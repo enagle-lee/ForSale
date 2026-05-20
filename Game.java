@@ -56,7 +56,8 @@ public class Game {
 
     public void playRound() {
         currentRoundNumber++;
-        activityLog.log("\n========== ROUND " + currentRoundNumber + " ==========");
+        System.out.println("\n========== ROUND " + currentRoundNumber + " ==========");
+        activityLog.log("========== ROUND " + currentRoundNumber + " ==========");
         
         List<Property> roundProperties = new ArrayList<>();
         for (int i = 0; i < 4 && !availableProperties.isEmpty(); i++) {
@@ -137,17 +138,17 @@ public class Game {
     private void displayGameState() {
         System.out.println("\n--- GAME STATE ---");
         
-        // Display user's information with property values
+        // Display user's information
         Player user = players.get(0);
-        System.out.println(user + ", Property Value: $" + user.getPropertyValue());
+        System.out.println(user);
         if (!user.getProperties().isEmpty()) {
             System.out.println("  Your properties:");
             for (Property p : user.getProperties()) {
-                System.out.println("    - " + p.toStringWithValue());
+                System.out.println("    - " + p);
             }
         }
         
-        // Display other players' info without property values
+        // Display other players' info
         for (int i = 1; i < players.size(); i++) {
             Player p = players.get(i);
             System.out.println(p);
@@ -165,12 +166,8 @@ public class Game {
         
         for (int i = 0; i < sortedPlayers.size(); i++) {
             Player p = sortedPlayers.get(i);
-            String info = (i + 1) + ". " + p.getName() + " - Properties: " + p.getProperties().size() + 
-                         ", Balance: $" + String.format("%.0f", p.getBalance());
-            if (p.getName().equals("You")) {
-                info += ", Property Value: $" + p.getPropertyValue();
-            }
-            System.out.println(info);
+            System.out.println((i + 1) + ". " + p.getName() + " - Properties: " + p.getProperties().size() + 
+                             ", Balance: $" + String.format("%.0f", p.getBalance()));
         }
         
         System.out.println("\n");

@@ -12,7 +12,7 @@ public class UserBidStrategy implements BidStrategy {
     public BidDecision makeBidDecision(Player player, List<Property> tableProperties, 
                                         double currentHighestBid, List<Player> allPlayers) {
         while (true) {
-            System.out.println("\n--- " + player.getName() + "'s Turn ---");
+            System.out.println("\n--- Your Turn ---");
             System.out.println("Your balance: $" + String.format("%.0f", player.getBalance()));
             System.out.println("Your current bid this round: $" + String.format("%.0f", player.getCurrentRoundBid()));
             System.out.println("Properties on table: " + tableProperties);
