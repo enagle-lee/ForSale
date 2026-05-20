@@ -19,7 +19,7 @@ public class UserBidStrategy implements BidStrategy {
             System.out.println("Current highest bid: $" + String.format("%.0f", currentHighestBid));
             
             System.out.println("\nOptions:");
-            System.out.println("1. Bid (enter amount in multiples of 1000, minimum $1000)");
+            System.out.println("1. Bid (enter INCREMENT amount in multiples of 1000, minimum total $1000)");
             System.out.println("2. Pass");
             System.out.print("> ");
             
@@ -28,28 +28,36 @@ public class UserBidStrategy implements BidStrategy {
             if (choice.equals("2")) {
                 return BidDecision.pass();
             } else if (choice.equals("1")) {
-                System.out.print("Enter bid amount: $");
+                System.out.print("Enter bid INCREMENT amount: $");
                 try {
-                    double amount = Double.parseDouble(scanner.nextLine().trim());
+                    double increment = Double.parseDouble(scanner.nextLine().trim());
+                    double totalBid = player.getCurrentRoundBid() + increment;
                     
-                    if (amount < 1000) {
-                        System.out.println("Bid must be at least $1000. Try again.");
+                    if (increment <= 0) {
+                        System.out.println("Bid increment must be greater than 0. Try again.");
                         continue;
                     }
-                    if (amount % 1000 != 0) {
-                        System.out.println("Bid must be a multiple of $1000. Try again.");
+                    if (increment % 1000 != 0) {
+                        System.out.println("Bid increment must be a multiple of $1000. Try again.");
                         continue;
                     }
-                    if (amount <= currentHighestBid) {
-                        System.out.println("Bid must be higher than $" + String.format("%.0f", currentHighestBid) + ". Try again.");
+                    if (totalBid < 1000) {
+                        System.out.println("Total bid must be at least $1000. Try again.");
                         continue;
                     }
-                    if (player.getBalance() < amount) {
-                        System.out.println("You don't have enough balance. Try again.");
+                    if (totalBid <= currentHighestBid) {
+                        System.out.println("Total bid must be higher than $" + String.format("%.0f", currentHighestBid) + 
+                                         ". Your total would be $" + String.format("%.0f", totalBid) + ". Try again.");
+                        continue;
+                    }
+                    if (player.getBalance() < totalBid) {
+                        System.out.println("You don't have enough balance (need $" + String.format("%.0f", totalBid) + 
+                                         " total, have $" + String.format("%.0f", player.getBalance()) + "). Try again.");
                         continue;
                     }
                     
-                    return BidDecision.bid(amount);
+                    System.out.println("  Total bid this round will be: $" + String.format("%.0f", totalBid));
+                    return BidDecision.bid(increment);
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid input. Please enter a number.");
                 }

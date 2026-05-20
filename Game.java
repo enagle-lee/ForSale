@@ -76,36 +76,48 @@ public class Game {
             player.resetRoundState();
         }
         
-        List<Player> activePlayers = new ArrayList<>(players);
-        int turnCount = 0;
+        // Keep cycling through active players in order, starting with first player
+        List<Player> activePlayers;
+        int playerIndex = 0;
         
         while (round.getActivePlayers().size() > 1) {
-            // Get remaining active players
             activePlayers = round.getActivePlayers();
             if (activePlayers.isEmpty()) break;
             
-            // Rotate through active players
-            Player currentPlayer = activePlayers.get(turnCount % activePlayers.size());
-            turnCount++;
-            
-            int strategyIndex = players.indexOf(currentPlayer);
-            BidStrategy strategy = strategies[strategyIndex];
-            
-            System.out.println("\n--- " + currentPlayer.getName() + "'s Turn ---");
-            System.out.println("Active players remaining: " + activePlayers.size());
-            
-            BidDecision decision = strategy.makeBidDecision(currentPlayer, 
-                                                             round.getTableProperties(),
-                                                             round.getCurrentHighestBid(),
-                                                             players);
-            
-            if (decision.isBid()) {
-                round.handleBid(currentPlayer, decision.getAmount());
-                System.out.println(currentPlayer.getName() + " BIDS $" + String.format("%.0f", decision.getAmount()));
-            } else {
-                round.handlePass(currentPlayer);
-                System.out.println(currentPlayer.getName() + " PASSES");
+            // Find next active player starting from playerIndex
+            boolean foundPlayer = false;
+            for (int i = 0; i < players.size(); i++) {
+                int currentPlayerIdx = (playerIndex + i) % players.size();
+                Player candidate = players.get(currentPlayerIdx);
+                
+                if (activePlayers.contains(candidate)) {
+                    playerIndex = (currentPlayerIdx + 1) % players.size();
+                    foundPlayer = true;
+                    
+                    int strategyIndex = currentPlayerIdx;
+                    BidStrategy strategy = strategies[strategyIndex];
+                    
+                    System.out.println("\n--- " + candidate.getName() + "'s Turn ---");
+                    System.out.println("Active players remaining: " + activePlayers.size());
+                    
+                    BidDecision decision = strategy.makeBidDecision(candidate, 
+                                                                     round.getTableProperties(),
+                                                                     round.getCurrentHighestBid(),
+                                                                     players);
+                    
+                    if (decision.isBid()) {
+                        round.handleBid(candidate, decision.getAmount());
+                        System.out.println(candidate.getName() + " BIDS $" + String.format("%.0f", decision.getAmount()) +
+                                         " (total this round: $" + String.format("%.0f", candidate.getCurrentRoundBid()) + ")");
+                    } else {
+                        round.handlePass(candidate);
+                        System.out.println(candidate.getName() + " PASSES");
+                    }
+                    break;
+                }
             }
+            
+            if (!foundPlayer) break;
         }
         
         round.completeRound();
