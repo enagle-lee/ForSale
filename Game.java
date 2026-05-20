@@ -128,9 +128,23 @@ public class Game {
 
     private void displayGameState() {
         System.out.println("\n--- GAME STATE ---");
-        for (Player player : players) {
-            System.out.println(player);
+        
+        // Display user's information with property values
+        Player user = players.get(0);
+        System.out.println(user + ", Property Value: $" + user.getPropertyValue());
+        if (!user.getProperties().isEmpty()) {
+            System.out.println("  Your properties:");
+            for (Property p : user.getProperties()) {
+                System.out.println("    - " + p.toStringWithValue());
+            }
         }
+        
+        // Display other players' info without property values
+        for (int i = 1; i < players.size(); i++) {
+            Player p = players.get(i);
+            System.out.println(p);
+        }
+        
         System.out.println("------------------");
     }
 
@@ -143,8 +157,12 @@ public class Game {
         
         for (int i = 0; i < sortedPlayers.size(); i++) {
             Player p = sortedPlayers.get(i);
-            System.out.println((i + 1) + ". " + p.getName() + " - Properties: " + p.getProperties().size() + 
-                             ", Balance: $" + String.format("%.0f", p.getBalance()));
+            String info = (i + 1) + ". " + p.getName() + " - Properties: " + p.getProperties().size() + 
+                         ", Balance: $" + String.format("%.0f", p.getBalance());
+            if (p.getName().equals("You")) {
+                info += ", Property Value: $" + p.getPropertyValue();
+            }
+            System.out.println(info);
         }
         
         System.out.println("\n");

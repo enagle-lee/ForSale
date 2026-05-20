@@ -28,6 +28,14 @@ public class Player {
         return new ArrayList<>(properties);
     }
 
+    public int getPropertyValue() {
+        int total = 0;
+        for (Property p : properties) {
+            total += p.getValue();
+        }
+        return total;
+    }
+
     public void addProperty(Property property) {
         properties.add(property);
     }
