@@ -203,7 +203,8 @@ public class Game {
         
         for (int i = 0; i < sortedPlayers.size(); i++) {
             Player p = sortedPlayers.get(i);
-            System.out.println(emoji + ordinals[i] + " - " + p.getName() +             String emoji = (i == 0) ? "
+            String emoji = (i == 0) ? "🏆 " : "";
+            System.out.println(emoji + ordinals[i] + " - " + p.getName() + 
                              ": $" + String.format("%.0f", p.getBalance()) + 
                              " (balance) + $" + String.format("%.0f", p.getChecksEarned()) + 
                              " (checks) = $" + String.format("%.0f", p.getTotalMoney()) + 
