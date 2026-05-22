@@ -194,21 +194,23 @@ public class Game {
 
     private void displayFinalStandings() {
         System.out.println("\n\n===== GAME OVER =====");
-        System.out.println("\nFinal Standings (Phase I Balance + Phase II Checks):\n");
+        System.out.println("\nFinal Standings:\n");
         
         List<Player> sortedPlayers = new ArrayList<>(players);
         sortedPlayers.sort((a, b) -> Double.compare(b.getTotalMoney(), a.getTotalMoney()));
         
+        String[] ordinals = {"1st", "2nd", "3rd", "4th"};
+        
         for (int i = 0; i < sortedPlayers.size(); i++) {
             Player p = sortedPlayers.get(i);
-            String rank = (i == 0) ? "WINNER" : "" + (i + 1) + ".";
-            System.out.println(rank + " " + p.getName() + 
-                             " - Balance: $" + String.format("%.0f", p.getBalance()) +
-                             " + Checks: $" + String.format("%.0f", p.getChecksEarned()) +
-                             " = Total: $" + String.format("%.0f", p.getTotalMoney()));
+            System.out.println(emoji + ordinals[i] + " - " + p.getName() +             String emoji = (i == 0) ? "
+                             ": $" + String.format("%.0f", p.getBalance()) + 
+                             " (balance) + $" + String.format("%.0f", p.getChecksEarned()) + 
+                             " (checks) = $" + String.format("%.0f", p.getTotalMoney()) + 
+                             " (total)");
         }
         
-        System.out.println("\n");
+        System.out.println("\n" + sortedPlayers.get(0).getName().toUpperCase() + " WINS!\n");
         activityLog.display();
     }
 

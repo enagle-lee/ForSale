@@ -64,10 +64,8 @@ public class Phase2Round {
         if (player.getName().equals("You")) {
             // User chooses property
             while (true) {
-                System.out.println("\n" + player.getName() + "'s properties: " + 
-                                 player.getProperties().stream()
-                                       .map(p -> "Property " + p.getId())
-                                       .toArray(String[]::new).length + " properties");
+                System.out.println("\nYour properties: " + 
+                                 player.getProperties().size() + " properties");
                 for (Property p : player.getProperties()) {
                     System.out.println("  - Property " + p.getId());
                 }
@@ -98,7 +96,7 @@ public class Phase2Round {
         Player user = players.get(0);
         System.out.println(user + ", Checks: $" + user.getChecksEarned());
         if (!user.getProperties().isEmpty()) {
-            System.out.println("  Remaining properties:");
+            System.out.println("  Your remaining properties:");
             for (Property p : user.getProperties()) {
                 System.out.println("    - Property " + p.getId());
             }

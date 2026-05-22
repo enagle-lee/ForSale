@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -38,10 +39,11 @@ public class CheckSet {
         Random random = new Random();
         
         for (int i = 0; i < 4; i++) {
-            int check = (random.nextInt(11)) * 1000; // 0-10000 in multiples of 1000
+            int check = (random.nextInt(11)) * 1000;
             checks.add(check);
         }
         
+        Collections.sort(checks, Collections.reverseOrder());
         return new CheckSet(checks);
     }
 
