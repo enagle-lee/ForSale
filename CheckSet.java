@@ -31,6 +31,7 @@ public class CheckSet {
         checks.add(6000);
         checks.add(5000);
         checks.add(0);
+        Collections.sort(checks, Collections.reverseOrder());
         return new CheckSet(checks);
     }
 
